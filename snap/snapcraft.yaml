@@ -1,0 +1,84 @@
+name: vaapi-test
+base: core22
+version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Test PoC snap for Proto's VAAPI solution
+description: |
+  Test PoC snap for Proto's VAAPI solution
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  vainfo:
+    command: /usr/bin/vainfo
+    environment:
+#     LD_LIBRARY_PATH: /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void:$SNAP/usr/local/lib/$CRAFT_ARCH_TRIPLET
+#     LIBVA_DRIVERS_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/dri
+      LIBVA_DRIVERS_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/dri
+
+parts:
+  gmmlib:
+    source: https://github.com/intel/gmmlib.git
+    source-branch: master
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    override-stage: |
+      craftctl default
+
+      # patch the generated .pc file to correct 'installdir' and 'libdir'
+      sed -i -e "s@/usr/include@/root/stage/usr/include@" "$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig/igdgmm.pc"
+      sed -i -e "s@/usr/lib/@/root/stage/usr/lib@" "$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig/igdgmm.pc"
+
+  libva:
+    source: https://github.com/intel/libva.git
+    source-branch: master
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+    build-packages:
+      - libdrm-dev
+      - meson
+      - ninja-build
+
+  libva-utils:
+    after: [ libva ]
+    source: https://github.com/intel/libva-utils.git
+    source-branch: master
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+    build-packages:
+      - pkg-config
+
+  ihd-vaapi-driver:
+    after: [ gmmlib, libva ]
+    source: https://github.com/intel/media-driver
+    source-type: git
+    source-branch: master
+    plugin: cmake
+    build-packages:
+      - pkg-config
+
+  mesa-core22:
+    plugin: nil
+    stage-packages:
+      - libgl1-mesa-dri
+      #  This package depends on the full suite of drivers for the Video Acceleration
+      # API (VA API). It does not provide any drivers itself, and may be removed if
+      # you wish to only have certain drivers installed.
+      - va-driver-all
+      - libegl1
+      - libgles2
+    stage:
+      # filter libva* as it's being built from
+      # source (see above)
+      - -usr/lib/x86_64-linux-gnu/libva.so.2*
+      - -usr/lib/x86_64-linux-gnu/libigdgmm.so.12*
+      - -usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+
+      
+
+
+
+
