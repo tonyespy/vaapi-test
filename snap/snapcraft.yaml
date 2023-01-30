@@ -9,11 +9,14 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 
 apps:
+  gst-inspect:
+    command: /usr/bin/gst-inspect-1.0
+    environment:
+      GST_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/gstreamer-1.0
+      GST_PLUGIN_SCANNER: $SNAP/usr/libexec/gstreamer-1.0/gst-plugin-scanner
   vainfo:
     command: /usr/bin/vainfo
     environment:
-#     LD_LIBRARY_PATH: /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void:$SNAP/usr/local/lib/$CRAFT_ARCH_TRIPLET
-#     LIBVA_DRIVERS_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/dri
       LIBVA_DRIVERS_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/dri
 
 parts:
@@ -37,7 +40,7 @@ parts:
     meson-parameters:
       - --prefix=/usr
     build-packages:
-      - libdrm-dev
+      - libwayland-dev
       - meson
       - ninja-build
 
@@ -77,8 +80,43 @@ parts:
       - -usr/lib/x86_64-linux-gnu/libigdgmm.so.12*
       - -usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
 
-      
-
-
-
-
+  gstreamer:
+    after: [ ihd-vaapi-driver ]
+    source: https://github.com/GStreamer/gstreamer.git
+    source-tag: 1.20.5
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=debugoptimized
+      - -Dintrospection=enabled
+      - -Dvaapi=enabled
+      - -Dorc=enabled
+      - -Dgst-plugins-base:pango=enabled
+      - -Dbase=enabled
+      - -Dgood=enabled
+      - -Dbad=enabled
+      - -Dugly=disabled
+      - -Ddevtools=enabled
+      - -Dlibnice=enabled
+      - -Dlibav=enabled
+      - -Dgstreamer-vaapi:with_drm=yes
+# Note - the default gstreamer build builds a number of optional
+# dependencies, including FFmpeg. Ideally this should be disabled
+# and the snap modified to use ffmpeg from the archive.
+#
+#      - -DFFmpeg=disabled     this doesn't work!
+    build-packages:
+      - bison
+      - flex
+      - libavcodec-dev
+      - libdrm-dev
+      - libgirepository1.0-dev
+      - libssl-dev
+      - libudev-dev
+      - libunwind-dev
+      - libwayland-dev
+      - pkg-config
+      - waylandpp-dev
+    stage-packages:
+      - libunwind8
+      - libxml2
