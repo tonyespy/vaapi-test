@@ -39,8 +39,11 @@ parts:
     plugin: meson
     meson-parameters:
       - --prefix=/usr
+      - -Dwith_wayland=yes
+      - -Dwith_x11=yes
     build-packages:
       - libwayland-dev
+      - libx11-dev
       - meson
       - ninja-build
 
