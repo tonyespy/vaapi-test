@@ -104,7 +104,8 @@ parts:
       - -Ddevtools=enabled
       - -Dlibnice=enabled
       - -Dlibav=enabled
-
+#   build-environment:
+#     PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig/
 # Note - the default gstreamer build builds a number of optional
 # dependencies, including FFmpeg. Ideally this should be disabled
 # and the snap modified to use ffmpeg from the archive.
@@ -236,3 +237,6 @@ parts:
       - libunwind8
       - libxml2
       - ocl-icd-libopencl1
+    stage:
+      - -usr/lib/x86_64-linux-gnu/libva*
+
