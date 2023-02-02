@@ -100,10 +100,11 @@ parts:
       - -Dbase=enabled
       - -Dgood=enabled
       - -Dbad=enabled
+      - -Dgst-plugins-bad:tests=disabled
       - -Dugly=disabled
       - -Ddevtools=enabled
       - -Dlibnice=enabled
-      - -Dlibav=enabled
+      - -Dlibav=disabled
 #   build-environment:
 #     PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig/
 # Note - the default gstreamer build builds a number of optional
@@ -114,15 +115,6 @@ parts:
     build-packages:
       - bison
       - flex
-#     The following packages are required 
-      - libavcodec-dev
-#     - libavdevice-dev???
-      - libavfilter-dev
-      - libavformat-dev
-      - libavutil-dev
-      - libswscale-dev
-      - libswresample-dev
-      - libpostproc-dev
 #       required by gst-base:opengl plugin
       - libgraphene-1.0-dev
 #       required by gst-base:ogg
@@ -161,10 +153,6 @@ parts:
       - libaom3
       - libasound2
       - libass9
-      - libavcodec-extra58
-      - libavfilter-extra7
-      - libavformat-extra58
-      - libavutil56
 #     TODO: there are multiple packages which provide this library; REVIEW
       - libblas3
 #     FIXME: determine how to remove this dependency if possible using meson.
@@ -193,7 +181,6 @@ parts:
       - libopus0
       - libpgm-5.3-0
       - libpocketsphinx3
-      - libpostproc55
       - libquadmath0
       - librabbitmq4
       - librsvg2-2
@@ -210,12 +197,9 @@ parts:
       - libsratom-0-0
       - libsrt1.4-gnutls
       - libssh-gcrypt-4
-      - libswresample3
-      - libswscale5
       - libtheora0
       - libtwolame0
       - libudfread0
-      - libva-x11-2
       - libvdpau1
       - libvidstab1.1
       - libvorbis0a
