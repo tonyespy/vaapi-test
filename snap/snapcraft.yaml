@@ -93,7 +93,7 @@ parts:
       - -Dintrospection=enabled
       - -Dvaapi=enabled
       - -Dgstreamer-vaapi:with_wayland=yes
-      - -Dgstreamer-vaapi:with_x11=no
+      - -Dgstreamer-vaapi:with_x11=yes
       - -Dorc=enabled
       - -Dgst-plugins-base:pango=enabled
       - -Dgst-plugins-base:gl_winsys=wayland
