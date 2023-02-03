@@ -12,8 +12,11 @@ apps:
   gst-inspect:
     command: /usr/bin/gst-inspect-1.0
     environment:
+      GPU_VENDOR: "Intel"
       GST_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/gstreamer-1.0
       GST_PLUGIN_SCANNER: $SNAP/usr/libexec/gstreamer-1.0/gst-plugin-scanner
+      LIBVA_DRIVER_NAME: iHD
+      LIBVA_DRIVERS_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/dri
   vainfo:
     command: /usr/bin/vainfo
     environment:
