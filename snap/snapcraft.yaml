@@ -63,7 +63,7 @@ parts:
       - pkg-config
 
   ihd-vaapi-driver:
-    after: [ gmmlib, libva ]
+    after: [ gmmlib, libva, mesa-core22 ]
     source: https://github.com/intel/media-driver
     source-type: git
     source-branch: master
