@@ -16,6 +16,9 @@ environment:
   LIBVA_DRIVERS_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/dri
 
 apps:
+  gpu-top:
+    command: /usr/bin/intel_gpu_top
+
   gst-inspect:
     command: /usr/bin/gst-inspect-1.0
     environment:
@@ -259,3 +262,5 @@ parts:
     after: [ flutter-elinux ]
     source: https://github.com/Kofhein/flutter-elinux-plugins.git
     plugin: dump
+    stage-packages:
+      - intel-gpu-tools
