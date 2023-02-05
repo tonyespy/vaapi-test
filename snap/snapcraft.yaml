@@ -27,6 +27,17 @@ apps:
   vainfo:
     command: /usr/bin/vainfo
 
+# Need to fixup command, proto-m snap uses the following
+# command-line:
+#
+# command: bin/proto_device_application
+#
+# this is because the proto-m snap actually builds the
+# application before running it, whereas this test code
+# does both in one step.
+  video-example:
+    command: flutter-elinux run -d elinux-wayland
+
 parts:
   gmmlib:
     source: https://github.com/intel/gmmlib.git
@@ -208,3 +219,43 @@ parts:
       - gstreamer1.0-plugins-good
       - libgstreamer-plugins-base1.0-0
       - liborc-0.4-0
+
+  flutter-elinux:
+    after: [ gstreamer ]
+    source: https://github.com/sony/flutter-elinux.git
+    source-branch: main
+    plugin: nil
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/usr/bin
+      mkdir -p $CRAFT_PART_INSTALL/usr/libexec
+      cp -r $CRAFT_PART_SRC $CRAFT_PART_INSTALL/usr/libexec/flutter-elinux
+      ln -s $CRAFT_PART_INSTALL/usr/libexec/flutter-elinux/bin/flutter-elinux $CRAFT_PART_INSTALL/usr/bin/flutter-elinux
+    build-packages:
+      - clang
+      - cmake
+      - curl
+      - libstdc++-12-dev
+      - ninja-build
+      - unzip
+      - xz-utils
+      - zip
+    prime:
+      - -*
+
+# This will run video_player, basically it sources .webm video, but you
+# can find any sample video link(the one I used .mp4 MP4 ( H.264 ) |
+# Test Videos , links could be taken right clicking on download button)
+
+# To change video - just change url in:
+#
+# packages/video_player/example/lib/main.dart
+#
+# Simply run this command( might need to call in video_player flutter-elinux pub get )
+#
+# cd ~/hw_flutter_test/flutter-elinux-plugins/packages/video_player/example
+# flutter-elinux run -d elinux-wayland
+
+  flutter-elinux-plugins:
+    after: [ flutter-elinux ]
+    source: https://github.com/Kofhein/flutter-elinux-plugins.git
+    plugin: dump
