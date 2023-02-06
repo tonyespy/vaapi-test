@@ -39,7 +39,7 @@ apps:
 # application before running it, whereas this test code
 # does both in one step.
   video-example:
-    command: flutter-elinux run -d elinux-wayland
+    command: bin/video_player_example elinux-wayland
 
 parts:
   gmmlib:
@@ -262,5 +262,20 @@ parts:
     after: [ flutter-elinux ]
     source: https://github.com/Kofhein/flutter-elinux-plugins.git
     plugin: dump
+    build-packages:
+      - libxkbcommon-dev
     stage-packages:
       - intel-gpu-tools
+      - libwayland-cursor0
+      - libwayland-egl1
+      - libxkbcommon0
+    override-build: |
+      set -eux
+      cd packages/video_player/example
+      flutter-elinux upgrade
+      flutter-elinux doctor
+      flutter-elinux clean
+      flutter-elinux pub get
+      flutter-elinux build elinux -v
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      cp -r build/elinux/x64/release/bundle/* $CRAFT_PART_INSTALL/bin/
